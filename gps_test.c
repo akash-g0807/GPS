@@ -82,10 +82,17 @@ void processNMEA( unsigned char *Line, GPS *gps, int length){
 				gps->Minutes = (gps->Time - (gps->Hours * 10000)) / 100;
 				gps->Seconds = (gps->Time - (gps->Hours * 10000) - (gps->Minutes * 100));
 				gps->SecondsInDay = (gps->Hours * 3600) + (gps->Minutes * 60) + gps->Seconds;
+				printf("Time: %d:%d:%d \n", gps->Hours, gps->Minutes, gps->Seconds);
 			}
 
 			if(index == 2){
 				gps->Latitude = atof(token);
+				printf("Latitude: %f \n", gps->Latitude);
+			}
+
+			if(index == 2 && *token == '0'){
+				gps->FixQuality = 0;
+				printf("No Fix \n");
 			}
 
 			if(index == 3){
@@ -105,7 +112,7 @@ void processNMEA( unsigned char *Line, GPS *gps, int length){
 			}
 
 			if(index == 6){
-				printf("Fix: %s \n", token);
+				//printf("Fix: %s \n", token);
 				gps->FixQuality = atoi(token);
 			}
 
@@ -114,7 +121,7 @@ void processNMEA( unsigned char *Line, GPS *gps, int length){
 			}
 
 			if(index == 8){
-				printf("HDOP: %s \n", token);
+				//printf("HDOP: %s \n", token);
 				gps->HDOP = atof(token);
 			}
 
@@ -123,36 +130,36 @@ void processNMEA( unsigned char *Line, GPS *gps, int length){
 			}
 
 			if(index == 10){
-				printf("Altitude Units: %s \n", token);
+				//printf("Altitude Units: %s \n", token);
 			}
 
 			if(index == 11){
-				printf("Geoid Separation: %s \n", token);
+				//printf("Geoid Separation: %s \n", token);
 				gps->GeoidSeparation = atof(token);
 			}
 
 			if(index == 12){
-				printf("Geoid Separation Units: %s \n", token);
+				//printf("Geoid Separation Units: %s \n", token);
 			}
 
 			if (gps->FixQuality == 2)
 				{
 				
 				if(index == 13){
-					printf("Age of Differential GPS Data: %s \n", token);
+					//printf("Age of Differential GPS Data: %s \n", token);
 				}
 
 				if(index == 14){
-					printf("Differential Reference Station ID: %s \n", token);
+					//printf("Differential Reference Station ID: %s \n", token);
 				}
 
 				if(index == 15){
-					printf("Checksum: %s \n", token);
+					//printf("Checksum: %s \n", token);
 				}
 			}
 			else{
 				if(index == 13){
-					printf("Checksum: %s \n", token);
+					//printf("Checksum: %s \n", token);
 				}
 			}
 
