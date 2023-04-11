@@ -1,8 +1,3 @@
-#include "pico/stdlib.h"
-#include <stdio.h>
-#include "hardware/uart.h"
-#include <stdint.h>
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -34,24 +29,68 @@ void send_message(unsigned char *message, int len)
 	}
 }
 
-int main() {
-
-	stdio_init_all();
+void setup_gps(){
+	// Set up UART
 	uart_init(uart0, BAUD_RATE);
 	gpio_set_function(UART_TX_PIN, GPIO_FUNC_UART);
 	gpio_set_function(UART_RX_PIN, GPIO_FUNC_UART);
 	uart_set_format(uart0, DATA_BITS, STOP_BITS, PARITY);
+}
 
+void reset_gps(){
+	// Reset GPS
 	unsigned char message[] = {'$','P','M','T','K','1','0','4','*','3','7','\r','\n'};
 
 	int length = sizeof(message)/sizeof(message[0]);
 
 	send_message(message, length);
+	
+}
+
+int main() {
+
+	stdio_init_all();
+	
+	setup_gps();
+
+	reset_gps();
+
+
 
 	while (1) {
 		if (uart_is_readable(uart0)) {
 			char c = uart_getc(uart0);
-			printf("%c", c);	
+			// printf("%c", c);
+
+			static unsigned char Line[100];
+			static int index=0;
+
+			if(c == '$'){
+
+				index = 0;
+				Line[index] = c;
+				index++;	
+
+			}
+			else if(index > 90){
+
+				index = 0;
+
+			}
+			else if(index > 0 && c != '\r'){
+				
+				Line[index] = c;
+				index++;
+
+				if(c == '\n'){
+
+					Line[index] = '\0';
+					index = 0;
+					printf("%s", Line);
+
+				}
+
+			}
 		}
 
 
