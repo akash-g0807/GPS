@@ -30,6 +30,27 @@ typedef struct GPS
 	
 } GPS;
 
+int32_t str_to_int(char *str, int len)
+{
+	int32_t result = 0;
+	int i;
+	int unit = 0;
+	for (i=len - 1; i >= 0; i--)
+	{	
+		if(str[i] != '.'){
+			int digit = str[i] - '0';
+			//printf("***%d", digit);
+			result = result + (digit * pow(10, unit));
+			unit++;
+
+		}
+		
+		
+	}
+
+	return result;
+}
+
 void send_message(unsigned char *message, int len)
 {
 	int i;
@@ -64,7 +85,7 @@ void processNMEA( unsigned char *Line, GPS *gps, int length){
 
 	if(Line[0] == '$' && Line[1] == 'G' && Line[2] == 'P' && Line[3] == 'G' && Line[4] == 'G' && Line[5] == 'A'){
 
-		printf("GGA Message Received %s \n", Line);
+		printf("GGA Message Received %s", Line);
 
 		// using strtok to split the string
 		char *token = strtok(Line, ",");
@@ -73,8 +94,6 @@ void processNMEA( unsigned char *Line, GPS *gps, int length){
 			printf("%d: %s \n", index, token);
 			token = strtok(NULL, ",");
 			index++;
-
-			
 
 			if(index == 1){
 				gps->Time = atoi(token);
@@ -86,8 +105,12 @@ void processNMEA( unsigned char *Line, GPS *gps, int length){
 			}
 
 			if(index == 2){
-				gps->Latitude = atof(token);
-				printf("Latitude: %f \n", gps->Latitude);
+				int length = strlen(token);
+				//printf("Length: %d \n", length);
+				//printf("Latitude: %s \n", token);
+				int32_t result = str_to_int(token, length);
+				gps->Latitude = result;
+				//printf("Result: %d \n", result);
 			}
 
 			if(index == 2 && *token == '0'){
@@ -162,10 +185,6 @@ void processNMEA( unsigned char *Line, GPS *gps, int length){
 					//printf("Checksum: %s \n", token);
 				}
 			}
-
-			
-
-
 
 		}
 	}
