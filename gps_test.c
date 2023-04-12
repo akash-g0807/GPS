@@ -18,10 +18,10 @@
 typedef struct GPS
 {
 	long Time;							// Time as read from GPS, as an integer but 12:13:14 is 121314
-	long SecondsInDay;					// Time in seconds since midnight.  Used for APRS timing, and LoRa timing in TDM mode
+	long SecondsInDay;					// Time in seconds since midnight.
 	int Hours, Minutes, Seconds;
-	float Longitude, Latitude;
-	long Altitude, MinimumAltitude, MaximumAltitude, PreviousAltitude;
+	int32_t Longitude, Latitude;
+	long Altitude;
 	unsigned int Satellites;
 	unsigned int FixQuality;
 	float HDOP;
@@ -122,7 +122,9 @@ void processNMEA( unsigned char *Line, GPS *gps, int length){
 			}
 
 			if(index == 4){
-				gps->Longitude = atof(token);
+				int length = strlen(token);
+				int32_t result = str_to_int(token, length);
+				gps->Longitude = result;
 			}
 
 			if(index == 5){
@@ -146,7 +148,7 @@ void processNMEA( unsigned char *Line, GPS *gps, int length){
 			}
 
 			if(index == 9){
-				gps->Altitude = atoi(token);
+				gps->Altitude = atof(token);
 			}
 
 			if(index == 10){
@@ -185,6 +187,9 @@ void processNMEA( unsigned char *Line, GPS *gps, int length){
 
 		}
 	}
+
+	
+	
 }
 
 
