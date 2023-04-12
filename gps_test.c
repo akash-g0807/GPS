@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stdint.h>
 #include <math.h>
 #include "pico/stdlib.h"
 #include "hardware/gpio.h"
@@ -11,8 +12,6 @@
 #define DATA_BITS 8
 #define STOP_BITS 1
 #define PARITY UART_PARITY_NONE
-
-
 #define UART_TX_PIN 0
 #define UART_RX_PIN 1
 
@@ -43,9 +42,7 @@ int32_t str_to_int(char *str, int len)
 			result = result + (digit * pow(10, unit));
 			unit++;
 
-		}
-		
-		
+		}	
 	}
 
 	return result;
@@ -240,8 +237,6 @@ int main() {
 			}
 		}
 
-
 	}
-
 	
 }
