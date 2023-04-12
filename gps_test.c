@@ -187,21 +187,10 @@ void processNMEA( unsigned char *Line, GPS *gps, int length){
 
 		}
 	}
-
-	
 	
 }
 
-
-int main() {
-
-	stdio_init_all();
-	
-	setup_gps();
-
-	reset_gps();
- 
-	GPS gps;
+void readGPSData(GPS *gps){
 
 	static unsigned char Line[100];
 	static int index=0;
@@ -210,7 +199,6 @@ int main() {
 		if (uart_is_readable(uart0)) {
 			char c = uart_getc(uart0);
 			// printf("%c", c);
-
 
 			if(c == '$'){
 
@@ -233,7 +221,7 @@ int main() {
 
 					Line[index] = '\0';
 					//printf("%s", Line);
-					processNMEA(Line , &gps, index);
+					processNMEA(Line , gps, index);
 					//printf("Time: %d \n", gps.Time);
 					index = 0;
 
@@ -243,5 +231,23 @@ int main() {
 		}
 
 	}
+
+}
+
+
+int main() {
+
+	stdio_init_all();
+	
+	setup_gps();
+
+	reset_gps();
+ 
+	GPS gps;
+
+	static unsigned char Line[100];
+	static int index=0;
+
+	readGPSData(&gps);
 	
 }
