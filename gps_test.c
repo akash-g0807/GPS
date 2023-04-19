@@ -195,39 +195,37 @@ void readGPSData(GPS *gps){
 	static unsigned char Line[100];
 	static int index=0;
 
-	while (1) {
-		if (uart_is_readable(uart0)) {
-			char c = uart_getc(uart0);
-			// printf("%c", c);
+	if (uart_is_readable(uart0)) {
+		char c = uart_getc(uart0);
+		// printf("%c", c);
 
-			if(c == '$'){
+		if(c == '$'){
 
+			index = 0;
+			Line[index] = c;
+			index++;	
+
+		}
+		else if(index > 90){
+
+			index = 0;
+
+		}
+		else if(index > 0 && c != '\r'){
+			
+			Line[index] = c;
+			index++;
+
+			if(c == '\n'){
+
+				Line[index] = '\0';
+				//printf("%s", Line);
+				processNMEA(Line , gps, index);
+				//printf("Time: %d \n", gps.Time);
 				index = 0;
-				Line[index] = c;
-				index++;	
 
 			}
-			else if(index > 90){
 
-				index = 0;
-
-			}
-			else if(index > 0 && c != '\r'){
-				
-				Line[index] = c;
-				index++;
-
-				if(c == '\n'){
-
-					Line[index] = '\0';
-					//printf("%s", Line);
-					processNMEA(Line , gps, index);
-					//printf("Time: %d \n", gps.Time);
-					index = 0;
-
-				}
-
-			}
 		}
 
 	}
@@ -248,6 +246,10 @@ int main() {
 	static unsigned char Line[100];
 	static int index=0;
 
-	readGPSData(&gps);
+	while (1) {
+
+		readGPSData(&gps);
+
+	}
 	
 }
